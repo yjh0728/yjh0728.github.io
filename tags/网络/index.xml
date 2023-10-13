@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>网络 on observer-x&#39;s blog</title>
+        <link>https://demo.stack.jimmycai.com/tags/%E7%BD%91%E7%BB%9C/</link>
+        <description>Recent content in 网络 on observer-x&#39;s blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Sat, 16 Sep 2023 21:09:00 +0800</lastBuildDate><atom:link href="https://demo.stack.jimmycai.com/tags/%E7%BD%91%E7%BB%9C/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>解决Android 11及以上连接校园网需要证书的问题</title>
+        <link>https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/</link>
+        <pubDate>Sat, 16 Sep 2023 21:09:00 +0800</pubDate>
+        
+        <guid>https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
+        <description>&lt;img src="https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/cover.jpg" alt="Featured image of post 解决Android 11及以上连接校园网需要证书的问题" /&gt;&lt;h2 id=&#34;引入&#34;&gt;引入&lt;/h2&gt;
+&lt;p&gt;根据&lt;a class=&#34;link&#34; href=&#34;http://wifi.bnu.edu.cn/androidm.jsp&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;BNU信息网络中心的官方教程&lt;/a&gt;，安卓手机连接BNU-Mobile时有一个重要的细节，那就是“CA证书”这一项需要选择“未指定”（或者“不验证”之类的，whatever，总之就是不需要证书）。但是，如果手机的安卓版本比较高（尤其是原生安卓），“CA证书”这一项可能找不到“未指定”这一选项，这是因为开发安卓系统的谷歌公司在一次安全更新中把这一选项取消了，&lt;a class=&#34;link&#34; href=&#34;https://www.xda-developers.com/android-11-break-enterprise-wifi-connection/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;以后不选择证书将无法连接到类似我们校园网这样的企业Wifi&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;如何解决这一问题呢？要么修改系统（root），绕开系统限制，使得不选择证书仍然可以连接校园网；要么找到信息网络中心的证书，把它导入手机。第一个思路当然可行，但是它为了一个小问题而牺牲了系统的安全性与稳定性，故不在本文讨论的范围之内；本文想着重讨论的是第二种思路。&lt;/p&gt;
+&lt;p&gt;如果你身边有小伙伴使用苹果手机/iPad的话，你可能会发现TA们连接校园网相对安卓/鸿蒙用户而言会容易很多，基本上只需要输入学号和密码就可以了。正好我有一台用来记笔记的iPad，它连接校园网的过程如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/1-apple-device-connect-to-campus-wifi.png&#34;
+	width=&#34;1831&#34;
+	height=&#34;1039&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/1-apple-device-connect-to-campus-wifi_hu3c99538b78c215462c478ef5585d75d5_149514_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/1-apple-device-connect-to-campus-wifi_hu3c99538b78c215462c478ef5585d75d5_149514_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;iPad连接BNU-mobile&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;176&#34;
+		data-flex-basis=&#34;422px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;注意到了吗，iPad连接mobile时会弹出一个窗口，要求信任某个证书！要是能把这个证书导入到安卓手机，估计就大功告成了。但是我对苹果设备不熟，感觉从iOS这种一根毛都不肯拔下来的封闭系统里导出证书还是挺难的&amp;hellip;&lt;/p&gt;
+&lt;p&gt;如果你不想花太多时间去看我是怎么把这个证书搞到手的，可以直接去&lt;a class=&#34;link&#34; href=&#34;#%e6%88%91%e5%af%bc%e5%87%ba%e7%9a%84%e8%af%81%e4%b9%a6&#34; &gt;下载我导出的证书&lt;/a&gt;，并且看&lt;a class=&#34;link&#34; href=&#34;#%e5%af%bc%e5%85%a5%e8%af%81%e4%b9%a6&#34; &gt;如何利用这个证书让安卓手机连接上校园网&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id=&#34;如何捕获校园网证书&#34;&gt;如何捕获校园网证书&lt;/h2&gt;
+&lt;p&gt;虽然我校的信息网络建设已经快被喷烂了，但客观地说，在更新升级之后校园网的网速确实提升了不少，而且每个月100G的免费流量还是很香滴，所以我还是决定自己动手试试。&lt;/p&gt;
+&lt;p&gt;动用搜索引擎，我搜到了隔壁北邮某位大佬写的博文：&lt;a class=&#34;link&#34; href=&#34;https://blog.imlk.top/posts/connect-to-bput-campus-wifi-on-android-11/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Android11的QPR1安全更新后无法连接北邮校园WiFi的解决方法&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;文章主要的思路是动用&lt;a class=&#34;link&#34; href=&#34;https://www.wireshark.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Wireshark&lt;/a&gt;这款嗅探软件抓包，截获数据包里的校园网证书。但是如果你按这篇博文去动手操作，你会发现Wireshark截获的数据包一开始就是DHCP（分配ip地址），根本捕获不到认证过程的数据包，而校园网的证书就是在认证的时候传到我们的电脑上的。这篇博文的评论区里也有人指出了这个问题，作者指出需要使用“Monitor Mode”，但是你如果再去折腾一下这个Monitor Mode就会发现，网卡调成Monitor Mode的时候会断网，更不要说截取我们的校园网证书了&amp;hellip;&lt;/p&gt;
+&lt;p&gt;后来，我在某个相关的知乎回答下看到了“Kali Linux”，然后我搜出来一大堆用Kali去破解Wifi密码的博文，比如&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/gyfvaf/article/details/121966774&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;这篇&lt;/a&gt;，大概的思路是截取别人连接Wifi路由器时发送的数据包，然后破解这个数据包得到Wifi密码（蹭网新思路啊有木有）。这使我产生了灵感：校园网登录认证和Monitor Mode下的数据包抓取无法同时进行，但我可以截取别人登录校园网时的数据包啊！&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;font size=2&gt;题外话：关心网络安全的人可能早就听说过Kali Linux的大名。俗语云：“kali用的好，牢饭吃到饱。”不过咱是为了解决自己连不上校园网的问题，只需要把校园网的证书拿到手就行了，并不是为了去窥探别人在网络上的活动。个人认为这也不是什么危险的举动，&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;隔壁北邮在2021年就已经把他们校园网的证书公开给大家导入了&lt;/a&gt;。在运用这些技术的时候注意道德和法律底线，不要动歪脑筋就可以了。不过从上面这些破解wifi密码的博文可见，破解wifi密码其实很容易，设置一个高强度的wifi密码还是很有必要的。&lt;/font&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;下面就说说具体我是怎么操作的。我是在一台安装了Linux的电脑上操作的（非虚拟机/WSL，能连上wifi）。未必要Kali Linux，Debian或者Ubuntu，Deepin之类的Debian系Linux应该就可以了。**下面的操作是在Debian 12里进行的。**另外，你还需要一台能连上mobile的设备，电脑或者手机等等应该都行。&lt;/p&gt;
+&lt;h3 id=&#34;安装必要的软件包&#34;&gt;安装必要的软件包&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;apt install wireshark aircrack-ng wireless-tools&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;如果提示权限不够请自行加sudo或者切换到root下操作，下文同理。&lt;/p&gt;
+&lt;h3 id=&#34;连接到校园网获取mac地址和信道&#34;&gt;连接到校园网，获取MAC地址和信道&lt;/h3&gt;
+&lt;p&gt;参考&lt;a class=&#34;link&#34; href=&#34;https://ssast-readme.github.io/tech/Tsinghua-Secure/tsinghua-secure/#26-linux-8021x&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;linux如何连接清华的校园网&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;连上校园网后，输入如下命令：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;nmcli dev wifi list
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;终端会显示你周围的Wifi（下面只是一个样例，已经隐去了真实的信息，下文同理）：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;IN-USE  BSSID              SSID                       MODE   CHAN  RATE        SIGNAL  BARS      SECURITY    
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;*       32:B2:23:C3:75:93  BNU-mobile                 Infra  22    270 Mbit/s  82      ▂▄▆█    WPA2 802.1X 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        32:B2:23:C3:75:92  BNU-Student                Infra  22    270 Mbit/s  82      ▂▄▆█    --          
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        32:B2:23:C3:75:A5  BNU-Student                Infra  13    130 Mbit/s  74      ▂▄▆_    --          
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        32:B2:23:C3:75:A6  BNU-mobile                 Infra  13    130 Mbit/s  74      ▂▄▆_    WPA2 802.1X  
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;其中第一行打星号的就是你连上的那个校园网路由器，其他同名的wifi可能是其他宿舍里的校园网路由器。&lt;/p&gt;
+&lt;p&gt;我们主要关注BSSID和CHAN这两列的信息，它记录了我们连上的那个路由器的MAC地址和信道，把它们记下来。&lt;/p&gt;
+&lt;h3 id=&#34;截获证书&#34;&gt;截获证书&lt;/h3&gt;
+&lt;p&gt;注意，这部分内容需要管理员权限，切换到root或者使用sudo.&lt;/p&gt;
+&lt;h4 id=&#34;查看无线网卡名称&#34;&gt;查看无线网卡名称&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;iw dev
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;显示如下内容：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;phy#0
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	Unnamed/non-netdev interface
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		wdev 0x2
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		addr 7d:4a:1b:b8:e2:bc
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		type P2P-device
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		txpower 0.00 dBm
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	Interface wlp1s0
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		ifindex 4
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		wdev 0x1
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		addr 8e:af:e1:3e:ce:eB
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		ssid BNU-mobile
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		type managed
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		channel 22 (4320 MHz), width: 40 MHz, center1: 4330 MHz
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		txpower 15.00 dBm
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		multicast TXQ:
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;			0	0	0	0	0	0	0	0		0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;可见我这里无线网卡的名称是&lt;code&gt;wlp1s0&lt;/code&gt;.&lt;/p&gt;
+&lt;h4 id=&#34;查看无线网卡是否支持monitor-mode&#34;&gt;查看无线网卡是否支持Monitor Mode&lt;/h4&gt;
+&lt;p&gt;列出所有支持Monitor Mode的网卡：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;airmon-ng
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;显示如下内容：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;PHY	Interface	Driver		Chipset
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;phy0	wlp1s0		iwlwifi		Intel Corporation Wireless 9560 (rev 4a)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;说明我的无线网卡&lt;code&gt;wlp1s0&lt;/code&gt;支持Monitor Mode.&lt;/p&gt;
+&lt;h4 id=&#34;开启monitor-mode监听网络连接&#34;&gt;开启Monitor Mode，监听网络连接&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-mysql&#34; data-lang=&#34;mysql&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;airmon&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ng&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;start&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;wlp1s0&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;#（把`wlp1s0`替换成你的网卡名称）
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;显示如下内容：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Found 4 processes that could cause trouble.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Kill them using &amp;#39;airmon-ng check kill&amp;#39; before putting
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;the card in monitor mode, they will interfere by changing channels
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;and sometimes putting the interface back in managed mode
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    PID Name
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    745 avahi-daemon
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    771 avahi-daemon
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    782 NetworkManager
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    791 wpa_supplicant
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;PHY	Interface	Driver		Chipset
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;phy0	wlp1s0		iwlwifi		Intel Corporation Wireless 9560 (rev 4a)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		(mac80211 monitor mode vif enabled for [phy0]wlp1s0 on [phy0]wlp1s0mon)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		(mac80211 station mode vif disabled for [phy0]wlp1s0)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;从这个时候开始，电脑是处于断网状态的。注意，在这里，进入Monitor Mode的网卡名称变成了&lt;code&gt;wlp1s0mon&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;开启监听（把&lt;code&gt;-c&lt;/code&gt;和&lt;code&gt;--bssid&lt;/code&gt;后面的参数换成你在&lt;a class=&#34;link&#34; href=&#34;#%e8%bf%9e%e6%8e%a5%e5%88%b0%e6%a0%a1%e5%9b%ad%e7%bd%91%e8%8e%b7%e5%8f%96mac%e5%9c%b0%e5%9d%80%e5%92%8c%e4%bf%a1%e9%81%93&#34; &gt;这一步&lt;/a&gt;查到的信道和MAC地址，&lt;code&gt;wlp1s0mon&lt;/code&gt;换成上一步命令显示的进入Monitor Mode之后的网卡名称）：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;airodump-ng -c 22 --bssid 32:B2:23:C3:75:93 -w BNU-mobile wlp1s0mon
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;显示如下内容：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; CH 22 ][ Elapsed: 30 s ][ 2023-09-16 11:54 ]
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; BSSID              PWR RXQ  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 32:B2:23:C3:75:93  -56 100      290      279    7  22  220   WPA2 CCMP   MGT  BNU-mobile                                                                                                                                                   
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; BSSID              STATION            PWR   Rate    Lost    Frames  Notes  Probes
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 32:B2:23:C3:75:93  47:A7:4C:62:33:27  -41    6e- 6e     1      559                                                                                                                                                                          
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 32:B2:23:C3:75:93  D4:DE:D4:A5:7C:89  -35    9e- 6e     0      296   
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;然后用另一台能连接mobile的设备连接mobile，显示如下内容：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; CH 22 ][ Elapsed: 1 min ][ 2023-09-16 11:56 ][ WPA handshake: 32:B2:23:C3:75:93
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; BSSID              PWR RXQ  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 32:B2:23:C3:75:93  -49 100      598      779   27  22  220   WPA2 CCMP   MGT  BNU-mobile                                                                                                                                                   
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; BSSID              STATION            PWR   Rate    Lost    Frames  Notes  Probes
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 32:B2:23:C3:75:93  B6:52:C9:FC:EF:5F  -35    9e- 6e    11      294  PMKID  BNU-mobile                                                                                                                                                       
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 32:B2:23:C3:75:93  47:A7:4C:62:33:27  -41    6e- 6e     1      559                                                                                                                                                                          
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 32:B2:23:C3:75:93  D4:DE:D4:A5:7C:89  -35    9e- 6e     0      296  
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;不同之处在于右上角出现了“WPA handshake”字样，说明我们截取到了认证过程的数据包。如果没有出现这个字样，用另一台设备多连接几次mobile。&lt;/p&gt;
+&lt;p&gt;最后关闭Monitor Mode（把&lt;code&gt;wlp1s0mon&lt;/code&gt;换成之前显示的进入Monitor Mode之后的网卡名称）：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;airmon-ng stop wlp1s0mon
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;现在这台电脑可以重新连上网了。&lt;/p&gt;
+&lt;h3 id=&#34;从截取到的数据包导出证书&#34;&gt;从截取到的数据包导出证书&lt;/h3&gt;
+&lt;p&gt;用Wireshark打开读取到的数据（我这里文件名是&lt;code&gt;BNU-mobile.cap&lt;/code&gt;）&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;wireshark -r BNU-mobile.cap
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;在弹出的wireshark窗口里，搜索栏输入&lt;code&gt;tls.handshake.certificate&lt;/code&gt;过滤出认证时发送的那个数据包，如图所示展开数据包的内容：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/2-packets.png&#34;
+	width=&#34;1920&#34;
+	height=&#34;1052&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/2-packets_huafe00802fc70f5c1e532f11db05d1f6f_219199_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/2-packets_huafe00802fc70f5c1e532f11db05d1f6f_219199_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;认证时发送的数据包内容&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;182&#34;
+		data-flex-basis=&#34;438px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;看到红框框出的就是我们要的证书！只需要把第二个证书保存下来即可，注意后缀名取成&lt;code&gt;.cer&lt;/code&gt;，这样我们的安卓手机才能识别出来这个证书文件。&lt;/p&gt;
+&lt;h3 id=&#34;我导出的证书&#34;&gt;我导出的证书&lt;/h3&gt;
+&lt;p&gt;这里把我截取到的证书文件放出来：&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;downloads/1.cer&#34; &gt;1.cer&lt;/a&gt; MD5: &lt;code&gt;B91E41C5E0E75447F10D176FD50E58FA&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;downloads/2.cer&#34; &gt;2.cer&lt;/a&gt; MD5: &lt;code&gt;4C373EF1CA14A16C957DDA3C531ECE0A&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;注意，稍后我们将证书导入手机时，导入的是第二个证书文件（&lt;code&gt;2.cer&lt;/code&gt;）。&lt;/p&gt;
+&lt;h2 id=&#34;导入证书连上mobile&#34;&gt;导入证书，连上mobile&lt;/h2&gt;
+&lt;p&gt;有了证书文件，剩下要做的就很简单了。首先把证书文件&lt;code&gt;2.cer&lt;/code&gt;拷贝到手机里，然后导入证书。以我的手机为例，设置里搜索“证书”，选择WLAN证书，然后导入证书文件即可。最后连上wifi，其他地方和&lt;a class=&#34;link&#34; href=&#34;http://wifi.bnu.edu.cn/androidm.jsp&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;BNU信息网络中心的官方教程&lt;/a&gt;一致，只是CA证书这一项选我们刚刚导入的证书、域名填写证书的CN信息（这里是&lt;code&gt;wifi.bnu.edu.cn&lt;/code&gt;）就可以了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/3-phone-connect-to-enterprise-wifi.png&#34;
+	width=&#34;1655&#34;
+	height=&#34;2360&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/3-phone-connect-to-enterprise-wifi_hu81de83d6ce97fa6714816f686fa9f540_440306_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/3-phone-connect-to-enterprise-wifi_hu81de83d6ce97fa6714816f686fa9f540_440306_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;安卓手机导入证书并联网&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;70&#34;
+		data-flex-basis=&#34;168px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;其中证书的CN信息这么找：以Windows为例，打开证书文件，切换到“详细信息”这一栏，会显示如下内容：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/4-check-certificate-cn.png&#34;
+	width=&#34;940&#34;
+	height=&#34;1320&#34;
+	srcset=&#34;https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/4-check-certificate-cn_hu974534a673ac7179ee7f7fd18f0ff3c2_47149_480x0_resize_box_3.png 480w, https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/4-check-certificate-cn_hu974534a673ac7179ee7f7fd18f0ff3c2_47149_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Windows下查看CA证书的CN&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;71&#34;
+		data-flex-basis=&#34;170px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;写在最后&#34;&gt;写在最后&lt;/h2&gt;
+&lt;p&gt;校园网wifi证书看似多余，其实是在保护我们的网络安全，如果不使用证书或者使用无效的证书，谁也无法保证未来不会有某个心术不正的人利用证书问题设置一个假的校园网wifi，借此去窥视别人的网络活动乃至进行欺诈。https证书也是如此，它加密我们和网站之前的网络连接，保证我们上网浏览的内容不会被有心人士窥探。如今使用https加密已经成为网站的基本配置，&lt;a class=&#34;link&#34; href=&#34;https://w3techs.com/technologies/details/ce-httpsdefault&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;全球超过80%的网站是默认使用https的&lt;/a&gt;；然而北师大很多重要的网站，包括教务系统和学生邮箱的登录界面，仍然不支持https，这意味着每一个学生在教务系统的信息乃至数字京师的密码都可能被他人窃取。高考筛选学习能力，但不筛选道德水平。能考进北师大的学生学习能力都不差，师大的老师和学生也一直坚守着“诚信质朴”的传统，但很难保证未来某天会不会出现例外——某个学生利用计算机与网络方面的知识去做一些不好的事情。更加严格地做好网络安全方面的措施，不是对学生道德水平的不信任，更不是杞人忧天，而是切实地保障每一个学生应有的权益。&lt;/p&gt;
+&lt;p&gt;CA证书每年的开销从几百到几万元一年不等，尽管看起来很贵，相比每年种花花草草所花的钱还是很少的，相比每年110多亿的预算更是微不足道；更何况还有Let&amp;rsquo;s Encrypt这样免费而可靠的CA证书颁发机构。私以为开销不应该是2023年校园网和一些重要网站仍然没有CA证书的借口。设置CA证书不是成本问题，而是网络安全意识的问题。&lt;/p&gt;
+&lt;p&gt;当然，本人也只是连皮毛都没完全理解的业余爱好者，大佬们如果看到不对的地方请轻喷。&lt;/p&gt;
+&lt;p&gt;最后希望学校的信息网络建设越来越好。&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

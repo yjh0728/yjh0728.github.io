@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        解决Android 11及以上连接校园网需要证书的问题 ::
+        My New Hugo Site
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="引入 # 根据BNU信息网络中心的官方教程，安卓手机连接BNU-Mobile时有一个重要的细节，那就是“CA证书”这一项需要选择“未指定”（或者“不验证”之类的，whatever，总之就是不需要证书）。但是，如果手机的安卓版本比较高（尤其是原生安卓），“CA证书”这一项可能找不到“未指定”这一选项，这是因为开发安卓系统的谷歌公司在一次安全更新中把这一选项取消了，以后不选择证书将无法连接到类似我们校园网这样的企业Wifi。
+如何解决这一问题呢？要么修改系统（root），绕开系统限制，使得不选择证书仍然可以连接校园网；要么找到信息网络中心的证书，把它导入手机。第一个思路当然可行，但是它为了一个小问题而牺牲了系统的安全性与稳定性，故不在本文讨论的范围之内；本文想着重讨论的是第二种思路。
+如果你身边有小伙伴使用苹果手机/iPad的话，你可能会发现TA们连接校园网相对安卓/鸿蒙用户而言会容易很多，基本上只需要输入学号和密码就可以了。正好我有一台用来记笔记的iPad，它连接校园网的过程如下图所示：
+注意到了吗，iPad连接mobile时会弹出一个窗口，要求信任某个证书！要是能把这个证书导入到安卓手机，估计就大功告成了。但是我对苹果设备不熟，感觉从iOS这种一根毛都不肯拔下来的封闭系统里导出证书还是挺难的&amp;hellip;
+如果你不想花太多时间去看我是怎么把这个证书搞到手的，可以直接去下载我导出的证书，并且看如何利用这个证书让安卓手机连接上校园网。
+如何捕获校园网证书 # 虽然我校的信息网络建设已经快被喷烂了，但客观地说，在更新升级之后校园网的网速确实提升了不少，而且每个月100G的免费流量还是很香滴，所以我还是决定自己动手试试。
+动用搜索引擎，我搜到了隔壁北邮某位大佬写的博文：Android11的QPR1安全更新后无法连接北邮校园WiFi的解决方法
+文章主要的思路是动用Wireshark这款嗅探软件抓包，截获数据包里的校园网证书。但是如果你按这篇博文去动手操作，你会发现Wireshark截获的数据包一开始就是DHCP（分配ip地址），根本捕获不到认证过程的数据包，而校园网的证书就是在认证的时候传到我们的电脑上的。这篇博文的评论区里也有人指出了这个问题，作者指出需要使用“Monitor Mode”，但是你如果再去折腾一下这个Monitor Mode就会发现，网卡调成Monitor Mode的时候会断网，更不要说截取我们的校园网证书了&amp;hellip;
+后来，我在某个相关的知乎回答下看到了“Kali Linux”，然后我搜出来一大堆用Kali去破解Wifi密码的博文，比如这篇，大概的思路是截取别人连接Wifi路由器时发送的数据包，然后破解这个数据包得到Wifi密码（蹭网新思路啊有木有）。这使我产生了灵感：校园网登录认证和Monitor Mode下的数据包抓取无法同时进行，但我可以截取别人登录校园网时的数据包啊！
+题外话：关心网络安全的人可能早就听说过Kali Linux的大名。俗语云：“kali用的好，牢饭吃到饱。”不过咱是为了解决自己连不上校园网的问题，只需要把校园网的证书拿到手就行了，并不是为了去窥探别人在网络上的活动。个人认为这也不是什么危险的举动，隔壁北邮在2021年就已经把他们校园网的证书公开给大家导入了。在运用这些技术的时候注意道德和法律底线，不要动歪脑筋就可以了。不过从上面这些破解wifi密码的博文可见，破解wifi密码其实很容易，设置一个高强度的wifi密码还是很有必要的。
+下面就说说具体我是怎么操作的。我是在一台安装了Linux的电脑上操作的（非虚拟机/WSL，能连上wifi）。未必要Kali Linux，Debian或者Ubuntu，Deepin之类的Debian系Linux应该就可以了。**下面的操作是在Debian 12里进行的。**另外，你还需要一台能连上mobile的设备，电脑或者手机等等应该都行。
+安装必要的软件包 # apt install wireshark aircrack-ng wireless-tools
+如果提示权限不够请自行加sudo或者切换到root下操作，下文同理。
+连接到校园网，获取MAC地址和信道 # 参考linux如何连接清华的校园网。
+连上校园网后，输入如下命令：
+nmcli dev wifi list
+终端会显示你周围的Wifi（下面只是一个样例，已经隐去了真实的信息，下文同理）：
+IN-USE BSSID SSID MODE CHAN RATE SIGNAL BARS SECURITY * 32:B2:23:C3:75:93 BNU-mobile Infra 22 270 Mbit/s 82 ▂▄▆█ WPA2 802.1X 32:B2:23:C3:75:92 BNU-Student Infra 22 270 Mbit/s 82 ▂▄▆█ -- 32:B2:23:C3:75:A5 BNU-Student Infra 13 130 Mbit/s 74 ▂▄▆_ -- 32:B2:23:C3:75:A6 BNU-mobile Infra 13 130 Mbit/s 74 ▂▄▆_ WPA2 802."
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://example.org/posts/1-android-11-and-above-connect-to-enterprise-wifi/" />
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/style.css" />
+
+<link rel="stylesheet" href="https://example.org/style.css" />
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://example.org/img/apple-touch-icon-144-precomposed.png" />
+<link rel="shortcut icon" href="https://example.org/img/favicon.png" />
+
+
+<link href="/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="解决Android 11及以上连接校园网需要证书的问题"/>
+<meta name="twitter:description" content="引入 # 根据BNU信息网络中心的官方教程，安卓手机连接BNU-Mobile时有一个重要的细节，那就是“CA证书”这一项需要选择“未指定”（或者“不验证”之类的，whatever，总之就是不需要证书）。但是，如果手机的安卓版本比较高（尤其是原生安卓），“CA证书”这一项可能找不到“未指定”这一选项，这是因为开发安卓系统的谷歌公司在一次安全更新中把这一选项取消了，以后不选择证书将无法连接到类似我们校园网这样的企业Wifi。
+如何解决这一问题呢？要么修改系统（root），绕开系统限制，使得不选择证书仍然可以连接校园网；要么找到信息网络中心的证书，把它导入手机。第一个思路当然可行，但是它为了一个小问题而牺牲了系统的安全性与稳定性，故不在本文讨论的范围之内；本文想着重讨论的是第二种思路。
+如果你身边有小伙伴使用苹果手机/iPad的话，你可能会发现TA们连接校园网相对安卓/鸿蒙用户而言会容易很多，基本上只需要输入学号和密码就可以了。正好我有一台用来记笔记的iPad，它连接校园网的过程如下图所示：
+注意到了吗，iPad连接mobile时会弹出一个窗口，要求信任某个证书！要是能把这个证书导入到安卓手机，估计就大功告成了。但是我对苹果设备不熟，感觉从iOS这种一根毛都不肯拔下来的封闭系统里导出证书还是挺难的&hellip;
+如果你不想花太多时间去看我是怎么把这个证书搞到手的，可以直接去下载我导出的证书，并且看如何利用这个证书让安卓手机连接上校园网。
+如何捕获校园网证书 # 虽然我校的信息网络建设已经快被喷烂了，但客观地说，在更新升级之后校园网的网速确实提升了不少，而且每个月100G的免费流量还是很香滴，所以我还是决定自己动手试试。
+动用搜索引擎，我搜到了隔壁北邮某位大佬写的博文：Android11的QPR1安全更新后无法连接北邮校园WiFi的解决方法
+文章主要的思路是动用Wireshark这款嗅探软件抓包，截获数据包里的校园网证书。但是如果你按这篇博文去动手操作，你会发现Wireshark截获的数据包一开始就是DHCP（分配ip地址），根本捕获不到认证过程的数据包，而校园网的证书就是在认证的时候传到我们的电脑上的。这篇博文的评论区里也有人指出了这个问题，作者指出需要使用“Monitor Mode”，但是你如果再去折腾一下这个Monitor Mode就会发现，网卡调成Monitor Mode的时候会断网，更不要说截取我们的校园网证书了&hellip;
+后来，我在某个相关的知乎回答下看到了“Kali Linux”，然后我搜出来一大堆用Kali去破解Wifi密码的博文，比如这篇，大概的思路是截取别人连接Wifi路由器时发送的数据包，然后破解这个数据包得到Wifi密码（蹭网新思路啊有木有）。这使我产生了灵感：校园网登录认证和Monitor Mode下的数据包抓取无法同时进行，但我可以截取别人登录校园网时的数据包啊！
+题外话：关心网络安全的人可能早就听说过Kali Linux的大名。俗语云：“kali用的好，牢饭吃到饱。”不过咱是为了解决自己连不上校园网的问题，只需要把校园网的证书拿到手就行了，并不是为了去窥探别人在网络上的活动。个人认为这也不是什么危险的举动，隔壁北邮在2021年就已经把他们校园网的证书公开给大家导入了。在运用这些技术的时候注意道德和法律底线，不要动歪脑筋就可以了。不过从上面这些破解wifi密码的博文可见，破解wifi密码其实很容易，设置一个高强度的wifi密码还是很有必要的。
+下面就说说具体我是怎么操作的。我是在一台安装了Linux的电脑上操作的（非虚拟机/WSL，能连上wifi）。未必要Kali Linux，Debian或者Ubuntu，Deepin之类的Debian系Linux应该就可以了。**下面的操作是在Debian 12里进行的。**另外，你还需要一台能连上mobile的设备，电脑或者手机等等应该都行。
+安装必要的软件包 # apt install wireshark aircrack-ng wireless-tools
+如果提示权限不够请自行加sudo或者切换到root下操作，下文同理。
+连接到校园网，获取MAC地址和信道 # 参考linux如何连接清华的校园网。
+连上校园网后，输入如下命令：
+nmcli dev wifi list
+终端会显示你周围的Wifi（下面只是一个样例，已经隐去了真实的信息，下文同理）：
+IN-USE BSSID SSID MODE CHAN RATE SIGNAL BARS SECURITY * 32:B2:23:C3:75:93 BNU-mobile Infra 22 270 Mbit/s 82 ▂▄▆█ WPA2 802.1X 32:B2:23:C3:75:92 BNU-Student Infra 22 270 Mbit/s 82 ▂▄▆█ -- 32:B2:23:C3:75:A5 BNU-Student Infra 13 130 Mbit/s 74 ▂▄▆_ -- 32:B2:23:C3:75:A6 BNU-mobile Infra 13 130 Mbit/s 74 ▂▄▆_ WPA2 802."/>
+
+
+
+<meta property="og:title" content="解决Android 11及以上连接校园网需要证书的问题" />
+<meta property="og:description" content="引入 # 根据BNU信息网络中心的官方教程，安卓手机连接BNU-Mobile时有一个重要的细节，那就是“CA证书”这一项需要选择“未指定”（或者“不验证”之类的，whatever，总之就是不需要证书）。但是，如果手机的安卓版本比较高（尤其是原生安卓），“CA证书”这一项可能找不到“未指定”这一选项，这是因为开发安卓系统的谷歌公司在一次安全更新中把这一选项取消了，以后不选择证书将无法连接到类似我们校园网这样的企业Wifi。
+如何解决这一问题呢？要么修改系统（root），绕开系统限制，使得不选择证书仍然可以连接校园网；要么找到信息网络中心的证书，把它导入手机。第一个思路当然可行，但是它为了一个小问题而牺牲了系统的安全性与稳定性，故不在本文讨论的范围之内；本文想着重讨论的是第二种思路。
+如果你身边有小伙伴使用苹果手机/iPad的话，你可能会发现TA们连接校园网相对安卓/鸿蒙用户而言会容易很多，基本上只需要输入学号和密码就可以了。正好我有一台用来记笔记的iPad，它连接校园网的过程如下图所示：
+注意到了吗，iPad连接mobile时会弹出一个窗口，要求信任某个证书！要是能把这个证书导入到安卓手机，估计就大功告成了。但是我对苹果设备不熟，感觉从iOS这种一根毛都不肯拔下来的封闭系统里导出证书还是挺难的&hellip;
+如果你不想花太多时间去看我是怎么把这个证书搞到手的，可以直接去下载我导出的证书，并且看如何利用这个证书让安卓手机连接上校园网。
+如何捕获校园网证书 # 虽然我校的信息网络建设已经快被喷烂了，但客观地说，在更新升级之后校园网的网速确实提升了不少，而且每个月100G的免费流量还是很香滴，所以我还是决定自己动手试试。
+动用搜索引擎，我搜到了隔壁北邮某位大佬写的博文：Android11的QPR1安全更新后无法连接北邮校园WiFi的解决方法
+文章主要的思路是动用Wireshark这款嗅探软件抓包，截获数据包里的校园网证书。但是如果你按这篇博文去动手操作，你会发现Wireshark截获的数据包一开始就是DHCP（分配ip地址），根本捕获不到认证过程的数据包，而校园网的证书就是在认证的时候传到我们的电脑上的。这篇博文的评论区里也有人指出了这个问题，作者指出需要使用“Monitor Mode”，但是你如果再去折腾一下这个Monitor Mode就会发现，网卡调成Monitor Mode的时候会断网，更不要说截取我们的校园网证书了&hellip;
+后来，我在某个相关的知乎回答下看到了“Kali Linux”，然后我搜出来一大堆用Kali去破解Wifi密码的博文，比如这篇，大概的思路是截取别人连接Wifi路由器时发送的数据包，然后破解这个数据包得到Wifi密码（蹭网新思路啊有木有）。这使我产生了灵感：校园网登录认证和Monitor Mode下的数据包抓取无法同时进行，但我可以截取别人登录校园网时的数据包啊！
+题外话：关心网络安全的人可能早就听说过Kali Linux的大名。俗语云：“kali用的好，牢饭吃到饱。”不过咱是为了解决自己连不上校园网的问题，只需要把校园网的证书拿到手就行了，并不是为了去窥探别人在网络上的活动。个人认为这也不是什么危险的举动，隔壁北邮在2021年就已经把他们校园网的证书公开给大家导入了。在运用这些技术的时候注意道德和法律底线，不要动歪脑筋就可以了。不过从上面这些破解wifi密码的博文可见，破解wifi密码其实很容易，设置一个高强度的wifi密码还是很有必要的。
+下面就说说具体我是怎么操作的。我是在一台安装了Linux的电脑上操作的（非虚拟机/WSL，能连上wifi）。未必要Kali Linux，Debian或者Ubuntu，Deepin之类的Debian系Linux应该就可以了。**下面的操作是在Debian 12里进行的。**另外，你还需要一台能连上mobile的设备，电脑或者手机等等应该都行。
+安装必要的软件包 # apt install wireshark aircrack-ng wireless-tools
+如果提示权限不够请自行加sudo或者切换到root下操作，下文同理。
+连接到校园网，获取MAC地址和信道 # 参考linux如何连接清华的校园网。
+连上校园网后，输入如下命令：
+nmcli dev wifi list
+终端会显示你周围的Wifi（下面只是一个样例，已经隐去了真实的信息，下文同理）：
+IN-USE BSSID SSID MODE CHAN RATE SIGNAL BARS SECURITY * 32:B2:23:C3:75:93 BNU-mobile Infra 22 270 Mbit/s 82 ▂▄▆█ WPA2 802.1X 32:B2:23:C3:75:92 BNU-Student Infra 22 270 Mbit/s 82 ▂▄▆█ -- 32:B2:23:C3:75:A5 BNU-Student Infra 13 130 Mbit/s 74 ▂▄▆_ -- 32:B2:23:C3:75:A6 BNU-mobile Infra 13 130 Mbit/s 74 ▂▄▆_ WPA2 802." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.org/posts/1-android-11-and-above-connect-to-enterprise-wifi/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-16T18:34:31+08:00" />
+<meta property="article:modified_time" content="2023-09-16T18:34:31+08:00" />
+
+
+
+
+
+
+  </head>
+  <body >
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="https://example.org/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text"
+      >hello friend</span
+    >
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right">
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <article class="post">
+    <h1 class="post-title">解决Android 11及以上连接校园网需要证书的问题</h1>
+    <div class="post-meta">
+      
+        <time class="post-date">
+          2023-09-16
+        </time>
+
+        
+          
+        
+      
+
+      
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <h2 id="引入">
+  引入
+  <a href="#%e5%bc%95%e5%85%a5" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>根据<a href="http://wifi.bnu.edu.cn/androidm.jsp">BNU信息网络中心的官方教程</a>，安卓手机连接BNU-Mobile时有一个重要的细节，那就是“CA证书”这一项需要选择“未指定”（或者“不验证”之类的，whatever，总之就是不需要证书）。但是，如果手机的安卓版本比较高（尤其是原生安卓），“CA证书”这一项可能找不到“未指定”这一选项，这是因为开发安卓系统的谷歌公司在一次安全更新中把这一选项取消了，<a href="https://www.xda-developers.com/android-11-break-enterprise-wifi-connection/">以后不选择证书将无法连接到类似我们校园网这样的企业Wifi</a>。</p>
+<p>如何解决这一问题呢？要么修改系统（root），绕开系统限制，使得不选择证书仍然可以连接校园网；要么找到信息网络中心的证书，把它导入手机。第一个思路当然可行，但是它为了一个小问题而牺牲了系统的安全性与稳定性，故不在本文讨论的范围之内；本文想着重讨论的是第二种思路。</p>
+<p>如果你身边有小伙伴使用苹果手机/iPad的话，你可能会发现TA们连接校园网相对安卓/鸿蒙用户而言会容易很多，基本上只需要输入学号和密码就可以了。正好我有一台用来记笔记的iPad，它连接校园网的过程如下图所示：</p>
+<!-- raw HTML omitted -->
+<p>注意到了吗，iPad连接mobile时会弹出一个窗口，要求信任某个证书！要是能把这个证书导入到安卓手机，估计就大功告成了。但是我对苹果设备不熟，感觉从iOS这种一根毛都不肯拔下来的封闭系统里导出证书还是挺难的&hellip;</p>
+<p>如果你不想花太多时间去看我是怎么把这个证书搞到手的，可以直接去<a href="#%E6%88%91%E5%AF%BC%E5%87%BA%E7%9A%84%E8%AF%81%E4%B9%A6">下载我导出的证书</a>，并且看<a href="#%E5%AF%BC%E5%85%A5%E8%AF%81%E4%B9%A6">如何利用这个证书让安卓手机连接上校园网</a>。</p>
+<h2 id="如何捕获校园网证书">
+  如何捕获校园网证书
+  <a href="#%e5%a6%82%e4%bd%95%e6%8d%95%e8%8e%b7%e6%a0%a1%e5%9b%ad%e7%bd%91%e8%af%81%e4%b9%a6" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>虽然我校的信息网络建设已经快被喷烂了，但客观地说，在更新升级之后校园网的网速确实提升了不少，而且每个月100G的免费流量还是很香滴，所以我还是决定自己动手试试。</p>
+<p>动用搜索引擎，我搜到了隔壁北邮某位大佬写的博文：<a href="https://blog.imlk.top/posts/connect-to-bput-campus-wifi-on-android-11/">Android11的QPR1安全更新后无法连接北邮校园WiFi的解决方法</a></p>
+<p>文章主要的思路是动用<a href="https://www.wireshark.org/">Wireshark</a>这款嗅探软件抓包，截获数据包里的校园网证书。但是如果你按这篇博文去动手操作，你会发现Wireshark截获的数据包一开始就是DHCP（分配ip地址），根本捕获不到认证过程的数据包，而校园网的证书就是在认证的时候传到我们的电脑上的。这篇博文的评论区里也有人指出了这个问题，作者指出需要使用“Monitor Mode”，但是你如果再去折腾一下这个Monitor Mode就会发现，网卡调成Monitor Mode的时候会断网，更不要说截取我们的校园网证书了&hellip;</p>
+<p>后来，我在某个相关的知乎回答下看到了“Kali Linux”，然后我搜出来一大堆用Kali去破解Wifi密码的博文，比如<a href="https://blog.csdn.net/gyfvaf/article/details/121966774">这篇</a>，大概的思路是截取别人连接Wifi路由器时发送的数据包，然后破解这个数据包得到Wifi密码（蹭网新思路啊有木有）。这使我产生了灵感：校园网登录认证和Monitor Mode下的数据包抓取无法同时进行，但我可以截取别人登录校园网时的数据包啊！</p>
+<p><em><!-- raw HTML omitted -->题外话：关心网络安全的人可能早就听说过Kali Linux的大名。俗语云：“kali用的好，牢饭吃到饱。”不过咱是为了解决自己连不上校园网的问题，只需要把校园网的证书拿到手就行了，并不是为了去窥探别人在网络上的活动。个人认为这也不是什么危险的举动，<a href="">隔壁北邮在2021年就已经把他们校园网的证书公开给大家导入了</a>。在运用这些技术的时候注意道德和法律底线，不要动歪脑筋就可以了。不过从上面这些破解wifi密码的博文可见，破解wifi密码其实很容易，设置一个高强度的wifi密码还是很有必要的。<!-- raw HTML omitted --></em></p>
+<p>下面就说说具体我是怎么操作的。我是在一台安装了Linux的电脑上操作的（非虚拟机/WSL，能连上wifi）。未必要Kali Linux，Debian或者Ubuntu，Deepin之类的Debian系Linux应该就可以了。**下面的操作是在Debian 12里进行的。**另外，你还需要一台能连上mobile的设备，电脑或者手机等等应该都行。</p>
+<h3 id="安装必要的软件包">
+  安装必要的软件包
+  <a href="#%e5%ae%89%e8%a3%85%e5%bf%85%e8%a6%81%e7%9a%84%e8%bd%af%e4%bb%b6%e5%8c%85" class="h-anchor" aria-hidden="true">#</a>
+</h3>
+<p><code>apt install wireshark aircrack-ng wireless-tools</code></p>
+<p>如果提示权限不够请自行加sudo或者切换到root下操作，下文同理。</p>
+<h3 id="连接到校园网获取mac地址和信道">
+  连接到校园网，获取MAC地址和信道
+  <a href="#%e8%bf%9e%e6%8e%a5%e5%88%b0%e6%a0%a1%e5%9b%ad%e7%bd%91%e8%8e%b7%e5%8f%96mac%e5%9c%b0%e5%9d%80%e5%92%8c%e4%bf%a1%e9%81%93" class="h-anchor" aria-hidden="true">#</a>
+</h3>
+<p>参考<a href="https://ssast-readme.github.io/tech/Tsinghua-Secure/tsinghua-secure/#26-linux-8021x">linux如何连接清华的校园网</a>。</p>
+<p>连上校园网后，输入如下命令：</p>
+<p><code>nmcli dev wifi list</code></p>
+<p>终端会显示你周围的Wifi（下面只是一个样例，已经隐去了真实的信息，下文同理）：</p>
+<pre tabindex="0"><code>IN-USE  BSSID              SSID                       MODE   CHAN  RATE        SIGNAL  BARS      SECURITY    
+*       32:B2:23:C3:75:93  BNU-mobile                 Infra  22    270 Mbit/s  82      ▂▄▆█    WPA2 802.1X 
+        32:B2:23:C3:75:92  BNU-Student                Infra  22    270 Mbit/s  82      ▂▄▆█    --          
+        32:B2:23:C3:75:A5  BNU-Student                Infra  13    130 Mbit/s  74      ▂▄▆_    --          
+        32:B2:23:C3:75:A6  BNU-mobile                 Infra  13    130 Mbit/s  74      ▂▄▆_    WPA2 802.1X  
+</code></pre><p>其中第一行打星号的就是你连上的那个校园网路由器，其他同名的wifi可能是其他宿舍里的校园网路由器。</p>
+<p>我们主要关注BSSID和CHAN这两列的信息，它记录了我们连上的那个路由器的MAC地址和信道，把它们记下来。</p>
+<h3 id="截获证书">
+  截获证书
+  <a href="#%e6%88%aa%e8%8e%b7%e8%af%81%e4%b9%a6" class="h-anchor" aria-hidden="true">#</a>
+</h3>
+<p>注意，这部分内容需要管理员权限，切换到root或者使用sudo.</p>
+<h4 id="查看无线网卡名称">
+  查看无线网卡名称
+  <a href="#%e6%9f%a5%e7%9c%8b%e6%97%a0%e7%ba%bf%e7%bd%91%e5%8d%a1%e5%90%8d%e7%a7%b0" class="h-anchor" aria-hidden="true">#</a>
+</h4>
+<p><code>iw dev</code></p>
+<p>显示如下内容：</p>
+<pre tabindex="0"><code>phy#0
+	Unnamed/non-netdev interface
+		wdev 0x2
+		addr 7d:4a:1b:b8:e2:bc
+		type P2P-device
+		txpower 0.00 dBm
+	Interface wlp1s0
+		ifindex 4
+		wdev 0x1
+		addr 8e:af:e1:3e:ce:eB
+		ssid BNU-mobile
+		type managed
+		channel 22 (4320 MHz), width: 40 MHz, center1: 4330 MHz
+		txpower 15.00 dBm
+		multicast TXQ:
+			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+			0	0	0	0	0	0	0	0		0
+</code></pre><p>可见我这里无线网卡的名称是<code>wlp1s0</code>.</p>
+<h4 id="查看无线网卡是否支持monitor-mode">
+  查看无线网卡是否支持Monitor Mode
+  <a href="#%e6%9f%a5%e7%9c%8b%e6%97%a0%e7%ba%bf%e7%bd%91%e5%8d%a1%e6%98%af%e5%90%a6%e6%94%af%e6%8c%81monitor-mode" class="h-anchor" aria-hidden="true">#</a>
+</h4>
+<p>列出所有支持Monitor Mode的网卡：</p>
+<p><code>airmon-ng</code></p>
+<p>显示如下内容：</p>
+<pre tabindex="0"><code>PHY	Interface	Driver		Chipset
+
+phy0	wlp1s0		iwlwifi		Intel Corporation Wireless 9560 (rev 4a)
+</code></pre><p>说明我的无线网卡<code>wlp1s0</code>支持Monitor Mode.</p>
+<h4 id="开启monitor-mode监听网络连接">
+  开启Monitor Mode，监听网络连接
+  <a href="#%e5%bc%80%e5%90%afmonitor-mode%e7%9b%91%e5%90%ac%e7%bd%91%e7%bb%9c%e8%bf%9e%e6%8e%a5" class="h-anchor" aria-hidden="true">#</a>
+</h4>
+<p><code>airmon-ng start wlp1s0</code>（把<code>wlp1s0</code>替换成你的网卡名称）</p>
+<p>显示如下内容：</p>
+<pre tabindex="0"><code>Found 4 processes that could cause trouble.
+Kill them using &#39;airmon-ng check kill&#39; before putting
+the card in monitor mode, they will interfere by changing channels
+and sometimes putting the interface back in managed mode
+
+    PID Name
+    745 avahi-daemon
+    771 avahi-daemon
+    782 NetworkManager
+    791 wpa_supplicant
+
+PHY	Interface	Driver		Chipset
+
+phy0	wlp1s0		iwlwifi		Intel Corporation Wireless 9560 (rev 4a)
+		(mac80211 monitor mode vif enabled for [phy0]wlp1s0 on [phy0]wlp1s0mon)
+		(mac80211 station mode vif disabled for [phy0]wlp1s0)
+</code></pre><p>从这个时候开始，电脑是处于断网状态的。注意，在这里，进入Monitor Mode的网卡名称变成了<code>wlp1s0mon</code>.</p>
+<p>开启监听（把<code>-c</code>和<code>--bssid</code>后面的参数换成你在<a href="#%E8%BF%9E%E6%8E%A5%E5%88%B0%E6%A0%A1%E5%9B%AD%E7%BD%91%E8%8E%B7%E5%8F%96mac%E5%9C%B0%E5%9D%80%E5%92%8C%E4%BF%A1%E9%81%93">这一步</a>查到的信道和MAC地址，<code>wlp1s0mon</code>换成上一步命令显示的进入Monitor Mode之后的网卡名称）：</p>
+<p><code>airodump-ng -c 22 --bssid 32:B2:23:C3:75:93 -w BNU-mobile wlp1s0mon</code></p>
+<p>显示如下内容：</p>
+<pre tabindex="0"><code> CH 22 ][ Elapsed: 30 s ][ 2023-09-16 11:54 ]
+
+ BSSID              PWR RXQ  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
+
+ 32:B2:23:C3:75:93  -56 100      290      279    7  22  220   WPA2 CCMP   MGT  BNU-mobile                                                                                                                                                   
+
+ BSSID              STATION            PWR   Rate    Lost    Frames  Notes  Probes
+
+ 32:B2:23:C3:75:93  47:A7:4C:62:33:27  -41    6e- 6e     1      559                                                                                                                                                                          
+ 32:B2:23:C3:75:93  D4:DE:D4:A5:7C:89  -35    9e- 6e     0      296   
+</code></pre><p>然后用另一台能连接mobile的设备连接mobile，显示如下内容：</p>
+<pre tabindex="0"><code> CH 22 ][ Elapsed: 1 min ][ 2023-09-16 11:56 ][ WPA handshake: 32:B2:23:C3:75:93
+
+ BSSID              PWR RXQ  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
+
+ 32:B2:23:C3:75:93  -49 100      598      779   27  22  220   WPA2 CCMP   MGT  BNU-mobile                                                                                                                                                   
+
+ BSSID              STATION            PWR   Rate    Lost    Frames  Notes  Probes
+
+ 32:B2:23:C3:75:93  B6:52:C9:FC:EF:5F  -35    9e- 6e    11      294  PMKID  BNU-mobile                                                                                                                                                       
+ 32:B2:23:C3:75:93  47:A7:4C:62:33:27  -41    6e- 6e     1      559                                                                                                                                                                          
+ 32:B2:23:C3:75:93  D4:DE:D4:A5:7C:89  -35    9e- 6e     0      296  
+</code></pre><p>不同之处在于右上角出现了“WPA handshake”字样，说明我们截取到了认证过程的数据包。如果没有出现这个字样，用另一台设备多连接几次mobile。</p>
+<p>最后关闭Monitor Mode（把<code>wlp1s0mon</code>换成之前显示的进入Monitor Mode之后的网卡名称）：</p>
+<p><code>airmon-ng stop wlp1s0mon</code></p>
+<p>现在这台电脑可以重新连上网了。</p>
+<h3 id="从截取到的数据包导出证书">
+  从截取到的数据包导出证书
+  <a href="#%e4%bb%8e%e6%88%aa%e5%8f%96%e5%88%b0%e7%9a%84%e6%95%b0%e6%8d%ae%e5%8c%85%e5%af%bc%e5%87%ba%e8%af%81%e4%b9%a6" class="h-anchor" aria-hidden="true">#</a>
+</h3>
+<p>用Wireshark打开读取到的数据（我这里文件名是<code>BNU-mobile.cap</code>）</p>
+<p><code>wireshark -r BNU-mobile.cap</code></p>
+<p>在弹出的wireshark窗口里，搜索栏输入<code>tls.handshake.certificate</code>过滤出认证时发送的那个数据包，如图所示展开数据包的内容：</p>
+<!-- raw HTML omitted -->
+<p>看到红框框出的就是我们要的证书！只需要把第二个证书保存下来即可，注意后缀名取成<code>.cer</code>，这样我们的安卓手机才能识别出来这个证书文件。</p>
+<h3 id="我导出的证书">
+  我导出的证书
+  <a href="#%e6%88%91%e5%af%bc%e5%87%ba%e7%9a%84%e8%af%81%e4%b9%a6" class="h-anchor" aria-hidden="true">#</a>
+</h3>
+<p>这里把我截取到的证书文件放出来：</p>
+<p><!-- raw HTML omitted -->1.cer<!-- raw HTML omitted --> MD5: <code>B91E41C5E0E75447F10D176FD50E58FA</code></p>
+<p><!-- raw HTML omitted -->2.cer<!-- raw HTML omitted --> MD5: <code>4C373EF1CA14A16C957DDA3C531ECE0A</code></p>
+<p>注意，稍后我们将证书导入手机时，导入的是第二个证书文件（<code>2.cer</code>）。</p>
+<h2 id="导入证书连上mobile">
+  导入证书，连上mobile
+  <a href="#%e5%af%bc%e5%85%a5%e8%af%81%e4%b9%a6%e8%bf%9e%e4%b8%8amobile" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>有了证书文件，剩下要做的就很简单了。首先把证书文件<code>2.cer</code>拷贝到手机里，然后导入证书。以我的手机为例，设置里搜索“证书”，选择WLAN证书，然后导入证书文件即可。最后连上wifi，其他地方和<a href="http://wifi.bnu.edu.cn/androidm.jsp">BNU信息网络中心的官方教程</a>一致，只是CA证书这一项选我们刚刚导入的证书、域名填写证书的CN信息（这里是<code>wifi.bnu.edu.cn</code>）就可以了。</p>
+<!-- raw HTML omitted -->
+<p>其中证书的CN信息这么找：以Windows为例，打开证书文件，切换到“详细信息”这一栏，会显示如下内容：</p>
+<!-- raw HTML omitted -->
+<h2 id="写在最后">
+  写在最后
+  <a href="#%e5%86%99%e5%9c%a8%e6%9c%80%e5%90%8e" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>校园网wifi证书看似多余，其实是在保护我们的网络安全，如果不使用证书或者使用无效的证书，谁也无法保证未来不会有某个心术不正的人利用证书问题设置一个假的校园网wifi，借此去窥视别人的网络活动乃至进行欺诈。https证书也是如此，它加密我们和网站之前的网络连接，保证我们上网浏览的内容不会被有心人士窥探。如今使用https加密已经成为网站的基本配置，<a href="https://w3techs.com/technologies/details/ce-httpsdefault">全球超过80%的网站是默认使用https的</a>；然而北师大很多重要的网站，包括教务系统和学生邮箱的登录界面，仍然不支持https，这意味着每一个学生在教务系统的信息乃至数字京师的密码都可能被他人窃取。高考筛选学习能力，但不筛选道德水平。能考进北师大的学生学习能力都不差，师大的老师和学生也一直坚守着“诚信质朴”的传统，但很难保证未来某天会不会出现例外——某个学生利用计算机与网络方面的知识去做一些不好的事情。更加严格地做好网络安全方面的措施，不是对学生道德水平的不信任，更不是杞人忧天，而是切实地保障每一个学生应有的权益。</p>
+<p>CA证书每年的开销从几百到几万元一年不等，尽管看起来很贵，相比每年种花花草草所花的钱还是很少的，相比每年110多亿的预算更是微不足道；更何况还有Let&rsquo;s Encrypt这样免费而可靠的CA证书颁发机构。私以为开销不应该是2023年校园网和一些重要网站仍然没有CA证书的借口。设置CA证书不是成本问题，而是网络安全意识的问题。</p>
+<p>当然，本人也只是连皮毛都没完全理解的业余爱好者，大佬们如果看到不对的地方请轻喷。</p>
+<p>最后希望学校的信息网络建设越来越好。</p>
+
+    </div>
+    
+
+    
+      
+    
+  </article>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a
+  href="https://example.org/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text"
+      >hello friend</span
+    >
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span>© 2023 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span><a href="https://github.com/panr/hugo-theme-hello-friend" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
+      </div>
+    
+  </div>
+</footer>
+
+
+
+
+
+<script type="text/javascript" src="/bundle.min.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

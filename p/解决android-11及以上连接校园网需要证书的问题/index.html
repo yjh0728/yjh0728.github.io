@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='引入 根据BNU信息网络中心的官方教程，安卓手机连接BNU-Mobile时有一个重要的细节，那就是“CA证书”这一项需要选择“未指定”（或者“'>
+<title>解决Android 11及以上连接校园网需要证书的问题</title>
+
+<link rel='canonical' href='https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/'>
+
+<link rel="stylesheet" href="/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='解决Android 11及以上连接校园网需要证书的问题'>
+<meta property='og:description' content='引入 根据BNU信息网络中心的官方教程，安卓手机连接BNU-Mobile时有一个重要的细节，那就是“CA证书”这一项需要选择“未指定”（或者“'>
+<meta property='og:url' content='https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/'>
+<meta property='og:site_name' content='observer-x&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='网络' /><meta property='article:published_time' content='2023-09-16T21:09:00&#43;08:00'/><meta property='article:modified_time' content='2023-09-16T21:09:00&#43;08:00'/><meta property='og:image' content='https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/cover.jpg' />
+<meta name="twitter:title" content="解决Android 11及以上连接校园网需要证书的问题">
+<meta name="twitter:description" content="引入 根据BNU信息网络中心的官方教程，安卓手机连接BNU-Mobile时有一个重要的细节，那就是“CA证书”这一项需要选择“未指定”（或者“"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://demo.stack.jimmycai.com/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/cover.jpg' />
+    <link rel="shortcut icon" href="/favicon.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hucdbb07eeb0e3545bfd58078419d3145a_1858573_300x0_resize_box_3.png" width="300"
+                            height="293" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">observer-x&#39;s blog</a></h1>
+            <h2 class="site-description">惯性较大的拖延症患者</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/yjh0728'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://gitee.com/hyjzip'
+                        target="_blank"
+                        title="Gitee"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1694874144283" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4129" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M850.016 438.016H471.008q-14.016 0-23.488 9.504t-9.504 23.488v82.016q0 14.016 9.504 23.488t23.488 9.504h230.016q14.016 0 23.488 9.504t9.504 23.488v16.992q0 19.008-7.488 37.504t-20.992 32-32 20.992-37.504 7.488h-314.016q-12.992 0-23.008-9.504t-10.016-23.488v-312.992q0-19.008 8-37.504t21.504-32 32-20.992 37.504-7.488h462.016q12.992 0 23.008-10.016t10.016-23.008V173.984q0-12.992-10.016-23.008t-23.008-10.016H388q-67.008 0-123.488 33.504T174.496 264.48t-33.504 123.488v462.016q0 12.992 10.016 23.008t23.008 10.016h486.016q44.992 0 85.504-16.992t72-48.512 48.512-72 16.992-85.504v-188.992q0-14.016-10.016-23.488t-23.008-9.504z" p-id="4130"></path></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://mastodon.social/@run_lads_run'
+                        target="_blank"
+                        title="Mastodon"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1694874674180" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5151" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M930 358.22c0-194.4-127.42-251.4-127.42-251.4-125.04-57.4-457.12-56.8-580.96 0 0 0-127.44 57-127.44 251.4 0 231.4-13.2 518.8 211.26 578.2 81.02 21.4 150.64 26 206.66 22.8 101.62-5.6 158.64-36.2 158.64-36.2l-3.4-73.8s-72.62 22.8-154.24 20.2c-80.82-2.8-166-8.8-179.26-108a205.08 205.08 0 0 1-1.8-27.8c171.26 41.8 317.3 18.2 357.5 13.4 112.24-13.4 210-82.6 222.46-145.8 19.6-99.6 18-243 18-243z m-150.24 250.4h-93.26v-228.4c0-99.4-128-103.2-128 13.8v125h-92.66V394c0-117-128-113.2-128-13.8v228.4H244.38c0-244.2-10.4-295.8 36.82-350 51.8-57.8 159.64-61.6 207.66 12.2l23.2 39 23.2-39c48.22-74.2 156.24-69.6 207.66-12.2 47.42 54.6 36.8 106 36.8 350z" p-id="5152"></path></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#引入">引入</a></li>
+    <li><a href="#如何捕获校园网证书">如何捕获校园网证书</a>
+      <ol>
+        <li><a href="#安装必要的软件包">安装必要的软件包</a></li>
+        <li><a href="#连接到校园网获取mac地址和信道">连接到校园网，获取MAC地址和信道</a></li>
+        <li><a href="#截获证书">截获证书</a>
+          <ol>
+            <li><a href="#查看无线网卡名称">查看无线网卡名称</a></li>
+            <li><a href="#查看无线网卡是否支持monitor-mode">查看无线网卡是否支持Monitor Mode</a></li>
+            <li><a href="#开启monitor-mode监听网络连接">开启Monitor Mode，监听网络连接</a></li>
+          </ol>
+        </li>
+        <li><a href="#从截取到的数据包导出证书">从截取到的数据包导出证书</a></li>
+        <li><a href="#我导出的证书">我导出的证书</a></li>
+      </ol>
+    </li>
+    <li><a href="#导入证书连上mobile">导入证书，连上mobile</a></li>
+    <li><a href="#写在最后">写在最后</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/">
+                <img src="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/cover_hu817565be4c8893b618d840244c8d89bf_121455_800x0_resize_q75_box.jpg"
+                        srcset="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/cover_hu817565be4c8893b618d840244c8d89bf_121455_800x0_resize_q75_box.jpg 800w, /p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/cover_hu817565be4c8893b618d840244c8d89bf_121455_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="420" 
+                        loading="lazy"
+                        alt="Featured image of post 解决Android 11及以上连接校园网需要证书的问题" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E6%90%9E%E6%9C%BA%E6%97%A5%E8%AE%B0/" >
+                搞机日记
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/">解决Android 11及以上连接校园网需要证书的问题</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 16, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    8 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="引入">引入</h2>
+<p>根据<a class="link" href="http://wifi.bnu.edu.cn/androidm.jsp"  target="_blank" rel="noopener"
+    >BNU信息网络中心的官方教程</a>，安卓手机连接BNU-Mobile时有一个重要的细节，那就是“CA证书”这一项需要选择“未指定”（或者“不验证”之类的，whatever，总之就是不需要证书）。但是，如果手机的安卓版本比较高（尤其是原生安卓），“CA证书”这一项可能找不到“未指定”这一选项，这是因为开发安卓系统的谷歌公司在一次安全更新中把这一选项取消了，<a class="link" href="https://www.xda-developers.com/android-11-break-enterprise-wifi-connection/"  target="_blank" rel="noopener"
+    >以后不选择证书将无法连接到类似我们校园网这样的企业Wifi</a>。</p>
+<p>如何解决这一问题呢？要么修改系统（root），绕开系统限制，使得不选择证书仍然可以连接校园网；要么找到信息网络中心的证书，把它导入手机。第一个思路当然可行，但是它为了一个小问题而牺牲了系统的安全性与稳定性，故不在本文讨论的范围之内；本文想着重讨论的是第二种思路。</p>
+<p>如果你身边有小伙伴使用苹果手机/iPad的话，你可能会发现TA们连接校园网相对安卓/鸿蒙用户而言会容易很多，基本上只需要输入学号和密码就可以了。正好我有一台用来记笔记的iPad，它连接校园网的过程如下图所示：</p>
+<p><img src="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/1-apple-device-connect-to-campus-wifi.png"
+	width="1831"
+	height="1039"
+	srcset="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/1-apple-device-connect-to-campus-wifi_hu3c99538b78c215462c478ef5585d75d5_149514_480x0_resize_box_3.png 480w, /p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/1-apple-device-connect-to-campus-wifi_hu3c99538b78c215462c478ef5585d75d5_149514_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="iPad连接BNU-mobile"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="422px"
+	
+></p>
+<p>注意到了吗，iPad连接mobile时会弹出一个窗口，要求信任某个证书！要是能把这个证书导入到安卓手机，估计就大功告成了。但是我对苹果设备不熟，感觉从iOS这种一根毛都不肯拔下来的封闭系统里导出证书还是挺难的&hellip;</p>
+<p>如果你不想花太多时间去看我是怎么把这个证书搞到手的，可以直接去<a class="link" href="#%e6%88%91%e5%af%bc%e5%87%ba%e7%9a%84%e8%af%81%e4%b9%a6" >下载我导出的证书</a>，并且看<a class="link" href="#%e5%af%bc%e5%85%a5%e8%af%81%e4%b9%a6" >如何利用这个证书让安卓手机连接上校园网</a>。</p>
+<h2 id="如何捕获校园网证书">如何捕获校园网证书</h2>
+<p>虽然我校的信息网络建设已经快被喷烂了，但客观地说，在更新升级之后校园网的网速确实提升了不少，而且每个月100G的免费流量还是很香滴，所以我还是决定自己动手试试。</p>
+<p>动用搜索引擎，我搜到了隔壁北邮某位大佬写的博文：<a class="link" href="https://blog.imlk.top/posts/connect-to-bput-campus-wifi-on-android-11/"  target="_blank" rel="noopener"
+    >Android11的QPR1安全更新后无法连接北邮校园WiFi的解决方法</a></p>
+<p>文章主要的思路是动用<a class="link" href="https://www.wireshark.org/"  target="_blank" rel="noopener"
+    >Wireshark</a>这款嗅探软件抓包，截获数据包里的校园网证书。但是如果你按这篇博文去动手操作，你会发现Wireshark截获的数据包一开始就是DHCP（分配ip地址），根本捕获不到认证过程的数据包，而校园网的证书就是在认证的时候传到我们的电脑上的。这篇博文的评论区里也有人指出了这个问题，作者指出需要使用“Monitor Mode”，但是你如果再去折腾一下这个Monitor Mode就会发现，网卡调成Monitor Mode的时候会断网，更不要说截取我们的校园网证书了&hellip;</p>
+<p>后来，我在某个相关的知乎回答下看到了“Kali Linux”，然后我搜出来一大堆用Kali去破解Wifi密码的博文，比如<a class="link" href="https://blog.csdn.net/gyfvaf/article/details/121966774"  target="_blank" rel="noopener"
+    >这篇</a>，大概的思路是截取别人连接Wifi路由器时发送的数据包，然后破解这个数据包得到Wifi密码（蹭网新思路啊有木有）。这使我产生了灵感：校园网登录认证和Monitor Mode下的数据包抓取无法同时进行，但我可以截取别人登录校园网时的数据包啊！</p>
+<p><em><font size=2>题外话：关心网络安全的人可能早就听说过Kali Linux的大名。俗语云：“kali用的好，牢饭吃到饱。”不过咱是为了解决自己连不上校园网的问题，只需要把校园网的证书拿到手就行了，并不是为了去窥探别人在网络上的活动。个人认为这也不是什么危险的举动，<a class="link" href="" >隔壁北邮在2021年就已经把他们校园网的证书公开给大家导入了</a>。在运用这些技术的时候注意道德和法律底线，不要动歪脑筋就可以了。不过从上面这些破解wifi密码的博文可见，破解wifi密码其实很容易，设置一个高强度的wifi密码还是很有必要的。</font></em></p>
+<p>下面就说说具体我是怎么操作的。我是在一台安装了Linux的电脑上操作的（非虚拟机/WSL，能连上wifi）。未必要Kali Linux，Debian或者Ubuntu，Deepin之类的Debian系Linux应该就可以了。**下面的操作是在Debian 12里进行的。**另外，你还需要一台能连上mobile的设备，电脑或者手机等等应该都行。</p>
+<h3 id="安装必要的软件包">安装必要的软件包</h3>
+<p><code>apt install wireshark aircrack-ng wireless-tools</code></p>
+<p>如果提示权限不够请自行加sudo或者切换到root下操作，下文同理。</p>
+<h3 id="连接到校园网获取mac地址和信道">连接到校园网，获取MAC地址和信道</h3>
+<p>参考<a class="link" href="https://ssast-readme.github.io/tech/Tsinghua-Secure/tsinghua-secure/#26-linux-8021x"  target="_blank" rel="noopener"
+    >linux如何连接清华的校园网</a>。</p>
+<p>连上校园网后，输入如下命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">nmcli dev wifi list
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>终端会显示你周围的Wifi（下面只是一个样例，已经隐去了真实的信息，下文同理）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">IN-USE  BSSID              SSID                       MODE   CHAN  RATE        SIGNAL  BARS      SECURITY    
+</span></span><span class="line"><span class="cl">*       32:B2:23:C3:75:93  BNU-mobile                 Infra  22    270 Mbit/s  82      ▂▄▆█    WPA2 802.1X 
+</span></span><span class="line"><span class="cl">        32:B2:23:C3:75:92  BNU-Student                Infra  22    270 Mbit/s  82      ▂▄▆█    --          
+</span></span><span class="line"><span class="cl">        32:B2:23:C3:75:A5  BNU-Student                Infra  13    130 Mbit/s  74      ▂▄▆_    --          
+</span></span><span class="line"><span class="cl">        32:B2:23:C3:75:A6  BNU-mobile                 Infra  13    130 Mbit/s  74      ▂▄▆_    WPA2 802.1X  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其中第一行打星号的就是你连上的那个校园网路由器，其他同名的wifi可能是其他宿舍里的校园网路由器。</p>
+<p>我们主要关注BSSID和CHAN这两列的信息，它记录了我们连上的那个路由器的MAC地址和信道，把它们记下来。</p>
+<h3 id="截获证书">截获证书</h3>
+<p>注意，这部分内容需要管理员权限，切换到root或者使用sudo.</p>
+<h4 id="查看无线网卡名称">查看无线网卡名称</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">iw dev
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>显示如下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">phy#0
+</span></span><span class="line"><span class="cl">	Unnamed/non-netdev interface
+</span></span><span class="line"><span class="cl">		wdev 0x2
+</span></span><span class="line"><span class="cl">		addr 7d:4a:1b:b8:e2:bc
+</span></span><span class="line"><span class="cl">		type P2P-device
+</span></span><span class="line"><span class="cl">		txpower 0.00 dBm
+</span></span><span class="line"><span class="cl">	Interface wlp1s0
+</span></span><span class="line"><span class="cl">		ifindex 4
+</span></span><span class="line"><span class="cl">		wdev 0x1
+</span></span><span class="line"><span class="cl">		addr 8e:af:e1:3e:ce:eB
+</span></span><span class="line"><span class="cl">		ssid BNU-mobile
+</span></span><span class="line"><span class="cl">		type managed
+</span></span><span class="line"><span class="cl">		channel 22 (4320 MHz), width: 40 MHz, center1: 4330 MHz
+</span></span><span class="line"><span class="cl">		txpower 15.00 dBm
+</span></span><span class="line"><span class="cl">		multicast TXQ:
+</span></span><span class="line"><span class="cl">			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+</span></span><span class="line"><span class="cl">			0	0	0	0	0	0	0	0		0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可见我这里无线网卡的名称是<code>wlp1s0</code>.</p>
+<h4 id="查看无线网卡是否支持monitor-mode">查看无线网卡是否支持Monitor Mode</h4>
+<p>列出所有支持Monitor Mode的网卡：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">airmon-ng
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>显示如下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">PHY	Interface	Driver		Chipset
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">phy0	wlp1s0		iwlwifi		Intel Corporation Wireless 9560 (rev 4a)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>说明我的无线网卡<code>wlp1s0</code>支持Monitor Mode.</p>
+<h4 id="开启monitor-mode监听网络连接">开启Monitor Mode，监听网络连接</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">airmon</span><span class="o">-</span><span class="n">ng</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">wlp1s0</span><span class="w"> </span><span class="c1">#（把`wlp1s0`替换成你的网卡名称）
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>显示如下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Found 4 processes that could cause trouble.
+</span></span><span class="line"><span class="cl">Kill them using &#39;airmon-ng check kill&#39; before putting
+</span></span><span class="line"><span class="cl">the card in monitor mode, they will interfere by changing channels
+</span></span><span class="line"><span class="cl">and sometimes putting the interface back in managed mode
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    PID Name
+</span></span><span class="line"><span class="cl">    745 avahi-daemon
+</span></span><span class="line"><span class="cl">    771 avahi-daemon
+</span></span><span class="line"><span class="cl">    782 NetworkManager
+</span></span><span class="line"><span class="cl">    791 wpa_supplicant
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PHY	Interface	Driver		Chipset
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">phy0	wlp1s0		iwlwifi		Intel Corporation Wireless 9560 (rev 4a)
+</span></span><span class="line"><span class="cl">		(mac80211 monitor mode vif enabled for [phy0]wlp1s0 on [phy0]wlp1s0mon)
+</span></span><span class="line"><span class="cl">		(mac80211 station mode vif disabled for [phy0]wlp1s0)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从这个时候开始，电脑是处于断网状态的。注意，在这里，进入Monitor Mode的网卡名称变成了<code>wlp1s0mon</code>.</p>
+<p>开启监听（把<code>-c</code>和<code>--bssid</code>后面的参数换成你在<a class="link" href="#%e8%bf%9e%e6%8e%a5%e5%88%b0%e6%a0%a1%e5%9b%ad%e7%bd%91%e8%8e%b7%e5%8f%96mac%e5%9c%b0%e5%9d%80%e5%92%8c%e4%bf%a1%e9%81%93" >这一步</a>查到的信道和MAC地址，<code>wlp1s0mon</code>换成上一步命令显示的进入Monitor Mode之后的网卡名称）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">airodump-ng -c 22 --bssid 32:B2:23:C3:75:93 -w BNU-mobile wlp1s0mon
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>显示如下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"> CH 22 ][ Elapsed: 30 s ][ 2023-09-16 11:54 ]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> BSSID              PWR RXQ  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> 32:B2:23:C3:75:93  -56 100      290      279    7  22  220   WPA2 CCMP   MGT  BNU-mobile                                                                                                                                                   
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> BSSID              STATION            PWR   Rate    Lost    Frames  Notes  Probes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> 32:B2:23:C3:75:93  47:A7:4C:62:33:27  -41    6e- 6e     1      559                                                                                                                                                                          
+</span></span><span class="line"><span class="cl"> 32:B2:23:C3:75:93  D4:DE:D4:A5:7C:89  -35    9e- 6e     0      296   
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后用另一台能连接mobile的设备连接mobile，显示如下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"> CH 22 ][ Elapsed: 1 min ][ 2023-09-16 11:56 ][ WPA handshake: 32:B2:23:C3:75:93
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> BSSID              PWR RXQ  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> 32:B2:23:C3:75:93  -49 100      598      779   27  22  220   WPA2 CCMP   MGT  BNU-mobile                                                                                                                                                   
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> BSSID              STATION            PWR   Rate    Lost    Frames  Notes  Probes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> 32:B2:23:C3:75:93  B6:52:C9:FC:EF:5F  -35    9e- 6e    11      294  PMKID  BNU-mobile                                                                                                                                                       
+</span></span><span class="line"><span class="cl"> 32:B2:23:C3:75:93  47:A7:4C:62:33:27  -41    6e- 6e     1      559                                                                                                                                                                          
+</span></span><span class="line"><span class="cl"> 32:B2:23:C3:75:93  D4:DE:D4:A5:7C:89  -35    9e- 6e     0      296  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>不同之处在于右上角出现了“WPA handshake”字样，说明我们截取到了认证过程的数据包。如果没有出现这个字样，用另一台设备多连接几次mobile。</p>
+<p>最后关闭Monitor Mode（把<code>wlp1s0mon</code>换成之前显示的进入Monitor Mode之后的网卡名称）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">airmon-ng stop wlp1s0mon
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>现在这台电脑可以重新连上网了。</p>
+<h3 id="从截取到的数据包导出证书">从截取到的数据包导出证书</h3>
+<p>用Wireshark打开读取到的数据（我这里文件名是<code>BNU-mobile.cap</code>）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">wireshark -r BNU-mobile.cap
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在弹出的wireshark窗口里，搜索栏输入<code>tls.handshake.certificate</code>过滤出认证时发送的那个数据包，如图所示展开数据包的内容：</p>
+<p><img src="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/2-packets.png"
+	width="1920"
+	height="1052"
+	srcset="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/2-packets_huafe00802fc70f5c1e532f11db05d1f6f_219199_480x0_resize_box_3.png 480w, /p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/2-packets_huafe00802fc70f5c1e532f11db05d1f6f_219199_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="认证时发送的数据包内容"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="182"
+		data-flex-basis="438px"
+	
+></p>
+<p>看到红框框出的就是我们要的证书！只需要把第二个证书保存下来即可，注意后缀名取成<code>.cer</code>，这样我们的安卓手机才能识别出来这个证书文件。</p>
+<h3 id="我导出的证书">我导出的证书</h3>
+<p>这里把我截取到的证书文件放出来：</p>
+<p><a class="link" href="downloads/1.cer" >1.cer</a> MD5: <code>B91E41C5E0E75447F10D176FD50E58FA</code></p>
+<p><a class="link" href="downloads/2.cer" >2.cer</a> MD5: <code>4C373EF1CA14A16C957DDA3C531ECE0A</code></p>
+<p>注意，稍后我们将证书导入手机时，导入的是第二个证书文件（<code>2.cer</code>）。</p>
+<h2 id="导入证书连上mobile">导入证书，连上mobile</h2>
+<p>有了证书文件，剩下要做的就很简单了。首先把证书文件<code>2.cer</code>拷贝到手机里，然后导入证书。以我的手机为例，设置里搜索“证书”，选择WLAN证书，然后导入证书文件即可。最后连上wifi，其他地方和<a class="link" href="http://wifi.bnu.edu.cn/androidm.jsp"  target="_blank" rel="noopener"
+    >BNU信息网络中心的官方教程</a>一致，只是CA证书这一项选我们刚刚导入的证书、域名填写证书的CN信息（这里是<code>wifi.bnu.edu.cn</code>）就可以了。</p>
+<p><img src="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/3-phone-connect-to-enterprise-wifi.png"
+	width="1655"
+	height="2360"
+	srcset="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/3-phone-connect-to-enterprise-wifi_hu81de83d6ce97fa6714816f686fa9f540_440306_480x0_resize_box_3.png 480w, /p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/3-phone-connect-to-enterprise-wifi_hu81de83d6ce97fa6714816f686fa9f540_440306_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="安卓手机导入证书并联网"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="70"
+		data-flex-basis="168px"
+	
+></p>
+<p>其中证书的CN信息这么找：以Windows为例，打开证书文件，切换到“详细信息”这一栏，会显示如下内容：</p>
+<p><img src="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/4-check-certificate-cn.png"
+	width="940"
+	height="1320"
+	srcset="/p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/4-check-certificate-cn_hu974534a673ac7179ee7f7fd18f0ff3c2_47149_480x0_resize_box_3.png 480w, /p/%E8%A7%A3%E5%86%B3android-11%E5%8F%8A%E4%BB%A5%E4%B8%8A%E8%BF%9E%E6%8E%A5%E6%A0%A1%E5%9B%AD%E7%BD%91%E9%9C%80%E8%A6%81%E8%AF%81%E4%B9%A6%E7%9A%84%E9%97%AE%E9%A2%98/images/4-check-certificate-cn_hu974534a673ac7179ee7f7fd18f0ff3c2_47149_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="Windows下查看CA证书的CN"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="71"
+		data-flex-basis="170px"
+	
+></p>
+<h2 id="写在最后">写在最后</h2>
+<p>校园网wifi证书看似多余，其实是在保护我们的网络安全，如果不使用证书或者使用无效的证书，谁也无法保证未来不会有某个心术不正的人利用证书问题设置一个假的校园网wifi，借此去窥视别人的网络活动乃至进行欺诈。https证书也是如此，它加密我们和网站之前的网络连接，保证我们上网浏览的内容不会被有心人士窥探。如今使用https加密已经成为网站的基本配置，<a class="link" href="https://w3techs.com/technologies/details/ce-httpsdefault"  target="_blank" rel="noopener"
+    >全球超过80%的网站是默认使用https的</a>；然而北师大很多重要的网站，包括教务系统和学生邮箱的登录界面，仍然不支持https，这意味着每一个学生在教务系统的信息乃至数字京师的密码都可能被他人窃取。高考筛选学习能力，但不筛选道德水平。能考进北师大的学生学习能力都不差，师大的老师和学生也一直坚守着“诚信质朴”的传统，但很难保证未来某天会不会出现例外——某个学生利用计算机与网络方面的知识去做一些不好的事情。更加严格地做好网络安全方面的措施，不是对学生道德水平的不信任，更不是杞人忧天，而是切实地保障每一个学生应有的权益。</p>
+<p>CA证书每年的开销从几百到几万元一年不等，尽管看起来很贵，相比每年种花花草草所花的钱还是很少的，相比每年110多亿的预算更是微不足道；更何况还有Let&rsquo;s Encrypt这样免费而可靠的CA证书颁发机构。私以为开销不应该是2023年校园网和一些重要网站仍然没有CA证书的借口。设置CA证书不是成本问题，而是网络安全意识的问题。</p>
+<p>当然，本人也只是连皮毛都没完全理解的业余爱好者，大佬们如果看到不对的地方请轻喷。</p>
+<p>最后希望学校的信息网络建设越来越好。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%BD%91%E7%BB%9C/">网络</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2023 observer-x&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.20.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
