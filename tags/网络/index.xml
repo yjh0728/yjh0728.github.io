@@ -42,11 +42,19 @@
     &gt;Wireshark&lt;/a&gt;这款嗅探软件抓包，截获数据包里的校园网证书。但是如果你按这篇博文去动手操作，你会发现Wireshark截获的数据包一开始就是DHCP（分配ip地址），根本捕获不到认证过程的数据包，而校园网的证书就是在认证的时候传到我们的电脑上的。这篇博文的评论区里也有人指出了这个问题，作者指出需要使用“Monitor Mode”，但是你如果再去折腾一下这个Monitor Mode就会发现，网卡调成Monitor Mode的时候会断网，更不要说截取我们的校园网证书了&amp;hellip;&lt;/p&gt;
 &lt;p&gt;后来，我在某个相关的知乎回答下看到了“Kali Linux”，然后我搜出来一大堆用Kali去破解Wifi密码的博文，比如&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/gyfvaf/article/details/121966774&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;这篇&lt;/a&gt;，大概的思路是截取别人连接Wifi路由器时发送的数据包，然后破解这个数据包得到Wifi密码（蹭网新思路啊有木有）。这使我产生了灵感：校园网登录认证和Monitor Mode下的数据包抓取无法同时进行，但我可以截取别人登录校园网时的数据包啊！&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;&lt;font size=2&gt;题外话：关心网络安全的人可能早就听说过Kali Linux的大名。俗语云：“kali用的好，牢饭吃到饱。”不过咱是为了解决自己连不上校园网的问题，只需要把校园网的证书拿到手就行了，并不是为了去窥探别人在网络上的活动。个人认为这也不是什么危险的举动，&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;隔壁北邮在2021年就已经把他们校园网的证书公开给大家导入了&lt;/a&gt;。在运用这些技术的时候注意道德和法律底线，不要动歪脑筋就可以了。不过从上面这些破解wifi密码的博文可见，破解wifi密码其实很容易，设置一个高强度的wifi密码还是很有必要的。&lt;/font&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;font size=2&gt;题外话：关心网络安全的人可能早就听说过Kali Linux的大名。俗语云：“kali用的好，牢饭吃到饱。”不过咱是为了解决自己连不上校园网的问题，只需要把校园网的证书拿到手就行了，并不是为了去窥探别人在网络上的活动。个人认为这也不是什么危险的举动，&lt;a class=&#34;link&#34; href=&#34;https://bbs.byr.cn/article/BUPTNet/105477&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;隔壁北邮在2021年就已经把他们校园网的证书公开给大家导入了&lt;/a&gt;。在运用这些技术的时候注意道德和法律底线，不要动歪脑筋就可以了。不过从上面这些破解wifi密码的博文可见，破解wifi密码其实很容易，设置一个高强度的wifi密码还是很有必要的。&lt;/font&gt;&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;下面就说说具体我是怎么操作的。我是在一台安装了Linux的电脑上操作的（非虚拟机/WSL，能连上wifi）。未必要Kali Linux，Debian或者Ubuntu，Deepin之类的Debian系Linux应该就可以了。**下面的操作是在Debian 12里进行的。**另外，你还需要一台能连上mobile的设备，电脑或者手机等等应该都行。&lt;/p&gt;
 &lt;h3 id=&#34;安装必要的软件包&#34;&gt;安装必要的软件包&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;apt install wireshark aircrack-ng wireless-tools&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;如果提示权限不够请自行加sudo或者切换到root下操作，下文同理。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;apt install wireshark aircrack-ng wireless-tools
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果提示权限不够请自行加sudo或者切换到root下操作，下文同理。&lt;/p&gt;
 &lt;h3 id=&#34;连接到校园网获取mac地址和信道&#34;&gt;连接到校园网，获取MAC地址和信道&lt;/h3&gt;
 &lt;p&gt;参考&lt;a class=&#34;link&#34; href=&#34;https://ssast-readme.github.io/tech/Tsinghua-Secure/tsinghua-secure/#26-linux-8021x&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;linux如何连接清华的校园网&lt;/a&gt;。&lt;/p&gt;
